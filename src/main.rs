@@ -39,3 +39,14 @@ fn main() {
     let opt = Opt::from_args();
     println!("{:?}", opt);
 }
+
+// Testing cli options
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn no_args_passed() {
+        let opt = Opt::from_iter(&["test"]);
+        assert_eq!(format!("{:?}",opt), "Opt { clipboard: false, window: false, area: false, pointer: false, delay: 0, interactive: false, output: None }");
+    }
+}
