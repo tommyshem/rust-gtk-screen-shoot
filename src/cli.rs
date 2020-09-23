@@ -37,11 +37,9 @@ pub struct Opt {
 }
 
 // get arguments which are passed in from the command
-pub fn get_arguments_passed_in()->Opt{
+pub fn get_arguments_passed_in() -> Opt {
     Opt::from_args()
-    //println!("{:?}", opt);
 }
-
 
 #[test]
 fn no_args() {
@@ -52,10 +50,10 @@ fn no_args() {
 #[test]
 fn one_flag_args() {
     // Tests below
-struct FlagTestCase{
-    flag: String,
-    result: String,
-}
+    struct FlagTestCase {
+        flag: String,
+        result: String,
+    }
     let one_flag_args_test = vec![
         FlagTestCase{flag: String::from("-c"),result: String::from("Opt { clipboard: true, window: false, area: false, pointer: false, delay: 0, interactive: false, output: None }")},
         FlagTestCase{flag: String::from("--clipboard"),result: String::from("Opt { clipboard: true, window: false, area: false, pointer: false, delay: 0, interactive: false, output: None }")},
@@ -70,10 +68,9 @@ struct FlagTestCase{
         FlagTestCase{flag: String::from("-i"),result: String::from("Opt { clipboard: false, window: false, area: false, pointer: false, delay: 0, interactive: true, output: None }")},
         FlagTestCase{flag: String::from("--interactive"),result: String::from("Opt { clipboard: false, window: false, area: false, pointer: false, delay: 0, interactive: true, output: None }")},
         ];
-
-   for (_index, value) in one_flag_args_test.iter().enumerate() {
-    let opt = Opt::from_iter(&["test",&value.flag]);
-    assert_eq!(format!("{:?}",opt),value.result);
+    // run through tests
+    for (_index, value) in one_flag_args_test.iter().enumerate() {
+        let opt = Opt::from_iter(&["test", &value.flag]);
+        assert_eq!(format!("{:?}", opt), value.result);
     }
 }
-
