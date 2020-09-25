@@ -41,6 +41,8 @@ pub fn get_arguments_passed_in() -> Opt {
     Opt::from_args()
 }
 
+// Unit Tests below
+
 #[test]
 fn no_args() {
     let opt = Opt::from_iter(&["test"]);
@@ -50,6 +52,7 @@ fn no_args() {
 #[test]
 fn one_flag_args() {
     // Tests below
+    // flag the cli can handle and expected return result
     struct FlagTestCase {
         flag: String,
         result: String,
