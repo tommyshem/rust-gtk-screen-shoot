@@ -1,7 +1,7 @@
 use gio::prelude::*;
 use glib::clone;
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Builder, Button, Switch,RadioButton,SpinButton};
+use gtk::{ApplicationWindow, Builder, Button, RadioButton, SpinButton, Switch};
 use std::env::args;
 
 const APP_NAME: &str = "com.github.gtk-rs.examples.screenshot";
@@ -36,12 +36,24 @@ pub fn build_ui(application: &gtk::Application) {
     window.set_application(Some(application));
 
     // connect signals
-    capture_button.connect_clicked(|but| println!("capture button presseed"));
+    capture_button.connect_clicked(move|_| 
+        {println!("capture button presseed");
+        // get show pointer state
+        println!("state is {}",show_pointer_switch.get_state());
+        // get display number in seconds
+        println!("value is {}",delay_spiner.get_value());
+    }
+    );
     screen_button.connect_clicked(|button| println!("screen radio button pressed"));
     window_button.connect_clicked(|button| println!("window radio button pressed"));
-    selection_button.connect_clicked(|button| println!("selection radio button pressed"));
-    show_pointer_switch.connect_clicked (|button| println!("show pointer switch pressed"));
-    delay_spiner.connect_clicked(|button| println!("delay spiner pressed");
+
+    selection_button.connect_clicked(move|_| {
+        println!("selection radio button pressed");
+        //show_pointer_switch.visible(false);
+    });
+
+    //= false; // .connect_clicked (|button| println!("show pointer switch pressed"));
+    //delay_spiner::active(false); // connect_clicked(|button| println!("delay spiner pressed");
     // Display the widgets in the window
     window.show_all();
 }
