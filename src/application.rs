@@ -1,7 +1,7 @@
 use gio::prelude::*;
 use glib::clone;
 use gtk::prelude::*;
-use gtk::{ApplicationWindow, Builder, Button, RadioButton, SpinButton, Switch};
+use gtk::{ApplicationWindow, Builder, Button, RadioButton, SpinButton, Switch, Widget};
 use std::env::args;
 
 const APP_NAME: &str = "com.github.gtk-rs.examples.screenshot";
@@ -35,25 +35,32 @@ pub fn build_ui(application: &gtk::Application) {
     // set app to the builder appwindow reference
     window.set_application(Some(application));
 
-    // connect signals
-    capture_button.connect_clicked(move|_| 
-        {println!("capture button presseed");
+     // mouse clicked signal
+    capture_button.connect_clicked(clone!(@weak show_pointer_switch, @weak delay_spiner => move |_| {
+        println!("capture button presseed");
         // get show pointer state
-        println!("state is {}",show_pointer_switch.get_state());
+        println!("state is {}", show_pointer_switch.get_state());
         // get display number in seconds
-        println!("value is {}",delay_spiner.get_value());
-    }
-    );
-    screen_button.connect_clicked(|button| println!("screen radio button pressed"));
-    window_button.connect_clicked(|button| println!("window radio button pressed"));
-
-    selection_button.connect_clicked(move|_| {
+        println!("value is {}", delay_spiner.get_value());
+    }));
+     // mouse clicked signal
+    screen_button.connect_clicked(clone!(@weak show_pointer_switch, @weak delay_spiner => move |_|{
+        println!("screen radio button pressed");
+        show_pointer_switch.set_sensitive(true);
+        delay_spiner.set_sensitive(true);
+    }));
+     // mouse clicked signal
+    window_button.connect_clicked(clone!(@weak show_pointer_switch, @weak delay_spiner => move |_| {
+        println!("window radio button pressed");
+        show_pointer_switch.set_sensitive(true);
+        delay_spiner.set_sensitive(true);
+    }));
+    // mouse clicked signal
+    selection_button.connect_clicked(clone!(@weak show_pointer_switch, @weak delay_spiner => move  |_| {
         println!("selection radio button pressed");
-        //show_pointer_switch.visible(false);
-    });
-
-    //= false; // .connect_clicked (|button| println!("show pointer switch pressed"));
-    //delay_spiner::active(false); // connect_clicked(|button| println!("delay spiner pressed");
+        show_pointer_switch.set_sensitive(false);
+        delay_spiner.set_sensitive(false);
+    }));
     // Display the widgets in the window
     window.show_all();
 }
