@@ -42,9 +42,10 @@ pub fn build_ui(application: &gtk::Application) {
     // set app to the builder appwindow reference
     window.set_application(Some(application));
 
-    // mouse clicked signal
-    capture_button.connect_clicked(
-        clone!(@weak show_pointer_switch, @weak delay_spiner,@weak screen_button,@weak window_button,@weak selection_button,@weak application => move |_| {
+    //create action
+    let action_capture_buttion = gio::SimpleAction::new("capture_buttion", None);
+    // do this when the action is called
+    action_capture_buttion.connect_activate(clone!(@weak show_pointer_switch, @weak delay_spiner,@weak screen_button,@weak window_button,@weak selection_button,@weak application => move |_,_| {
             println!("capture button presseed");
             //get capture mode
             println!("screen_button state is {}",screen_button.get_active());
@@ -58,6 +59,13 @@ pub fn build_ui(application: &gtk::Application) {
             screenshot( &application);
         }),
     );
+    // add the action to the window
+    window.add_action(&action_capture_buttion);
+    // connect the action to the buttun
+    capture_button.connect_clicked(clone!(@weak action_capture_buttion => move |_| {
+        action_capture_buttion.activate(None);  // use the action
+    }));
+
     // mouse clicked signal
     screen_button.connect_clicked(clone!(@weak pointer_row => move |_|{
         println!("screen radio button pressed");
@@ -94,30 +102,47 @@ pub fn new() {
 pub fn screenshot(application: &gtk::Application) {
     let bus = application.get_dbus_connection().unwrap();
     // Plain call
-    let result = bus
-        .call_future(
-            Some("org.gnome.Shell.Screenshot"), // bus name
-            "/org/gnome/Shell/Screenshot",      // object path
-            "org.gnome.Shell.Screenshot",       // interface name
-            "PlayPause",                        // method name
-            None,                               //
-            None,                               //
-            gio::DBusCallFlags::NONE,           // 
-            69,                                 // timeout msec
-        );
-  //  eprintln!("{:?}", result);
+    let result = bus.call_future(
+        Some("org.gnome.Shell.Screenshot"), // bus name
+        "/org/gnome/Shell/Screenshot",      // object path
+        "org.gnome.Shell.Screenshot",       // interface name
+        "Screenshot",                       // method name
+        None,                               //
+        None,                               //
+        gio::DBusCallFlags::NONE,           //
+        69,                                 // timeout msec
+    );
+    //  eprintln!("{:?}", result);
 }
 
-//     let dbus = gio::DBusConnection::call_sync(
-//         "org.gnome.Shell.Screenshot",
-//         "/org/gnome/Shell/Screenshot",
-//         "org.gnome.Shell.Screenshot",
-//         method_name,
-//         method_params,
-//         NULL,
-//         G_DBUS_CALL_FLAGS_NONE,
-//         -1,
-//         NULL,
-//         &error);
+// method_name = "Screenshot";
+//       method_params = g_variant_new ("(bbs)",
+//                                      screenshot_config->include_pointer,
+//                                      TRUE, /* flash */
+//                                      filename);
+//     }
 
+//   connection = g_application_get_dbus_connection (g_application_get_default ());
+//   g_dbus_connection_call_sync (connection,
+//                                "org.gnome.Shell.Screenshot",
+//                                "/org/gnome/Shell/Screenshot",
+//                                "org.gnome.Shell.Screenshot",
+//                                method_name,
+//                                method_params,
+//                                NULL,
+//                                G_DBUS_CALL_FLAGS_NONE,
+//                                -1,
+//                                NULL,
+//                                &error);
+
+//   if (error == NULL)
+//     {
+//       screenshot = gdk_pixbuf_new_from_file (filename, &error);
+
+//       /* remove the temporary file created by the shell */
+//       g_unlink (filename);
+//     }
+
+//   return screenshot;
 // }
+
